@@ -1,15 +1,24 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
-
+import dotenv from 'dotenv'
+import AuthRoute from './Routes/AuthRoute.js'
+// Routes
 const app = express();
+
+// Middleware
 app.use(bodyParser.json({limit:'30mb', extended:true}))
 app.use(bodyParser.urlencoded({limit:'30mb', extended:true}))
 
 mongoose.set("strictQuery", false);
+
+dotenv.config()
 mongoose
-.connect("mongodb://AbigaelKirwa:minneymouse@ac-ur2vnn2-shard-00-00.oe6fdej.mongodb.net:27017,ac-ur2vnn2-shard-00-01.oe6fdej.mongodb.net:27017,ac-ur2vnn2-shard-00-02.oe6fdej.mongodb.net:27017/SocialMedia?ssl=true&replicaSet=atlas-9ici5p-shard-0&authSource=admin&retryWrites=true&w=majority",
+.connect(process.env.MONGO_DB,
 {useNewUrlParser:true, useUnifiedTopology:true}
 )
 
-.then(()=>app.listen(5000, ()=>console.log("Listening")))
+.then(()=>app.listen(process.env.PORT, ()=>console.log(`Listening at ${process.env.PORT}`))).catch((error)=>console.log.apply(error));
+
+//usage for routes
+app.use('/auth', AuthRoute)
